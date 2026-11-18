@@ -16,7 +16,6 @@ let config = {};
 let installPrompt;
 let scanner;
 let scanToken;
-let inviteLink;
 let rendered;
 let subscription;
 const apiRoot=window.MIRPESET_API || '/api';
@@ -142,15 +141,8 @@ function signIn(after) {
     $('demo-enter').onclick=event=>task(event.currentTarget,async()=>{await api('demo',{});await signedIn(after);});
     return;
   }
-  $('passkey').onclick=event=>task(event.currentTarget,()=>passkey(false,{},after));
-  $('join').onclick=()=>{
-    modal('אימות במכשיר',inviteLink ? '<p>השתמשו ב־Face ID, בטביעת אצבע או באפשרות האימות שהמכשיר מציע.</p><button id="use-invite" type="button" class="primary">אימות במכשיר</button>' : '<form id="entry"><p>הזינו את קוד ההזמנה כדי להמשיך לאימות במכשיר.</p><label class="field">קוד הזמנה<input name="invite" type="password" autocomplete="off" required></label><button class="primary">אימות במכשיר</button></form>');
-    if (inviteLink) {
-      $('use-invite').onclick=event=>task(event.currentTarget,()=>passkey(true,{invite:inviteLink},after));
-      return;
-    }
-    $('entry').onsubmit=event=>{event.preventDefault();void task(event.submitter,()=>passkey(true,Object.fromEntries(new FormData(event.currentTarget)),after));};
-  };
+  $('passkey').onclick=event=>task(event.currentTarget,()=>passkey(false,after));
+  $('join').onclick=event=>task(event.currentTarget,()=>passkey(true,after));
 }
 function chooseName(after) {
   modal('איך לקרוא לכם?','<p>האימות הושלם. זה השם שחברי הקבוצה יראו בלוח.</p><form id="profile-form"><label class="field">שם שיופיע בלוח<input name="name" maxlength="36" autocomplete="nickname" required></label><button class="primary">שמירת שם והצטרפות</button></form>');
@@ -161,13 +153,12 @@ function chooseName(after) {
   };
 }
 async function signedIn(after) {await refresh();if (!state.user?.name) return chooseName(after);dialog.close();if (after) after();else notice('התחברתם למרפסת.');}
-async function passkey(register,fields,after) {
+async function passkey(register,after) {
   const library=window.SimpleWebAuthnBrowser;
   if (!library?.browserSupportsWebAuthn()) throw new Error('מפתחות גישה דורשים דפדפן תומך וכתובת מאובטחת.');
-  const optionsJSON=await api('passkey/options',{register,...fields});
+  const optionsJSON=await api('passkey/options',{register});
   const answer=register ? await library.startRegistration({optionsJSON}) : await library.startAuthentication({optionsJSON});
   await api('passkey/verify',answer);
-  if (register) inviteLink=undefined;
   await signedIn(after);
 }
 $('account').onclick=()=>{
@@ -255,7 +246,7 @@ $('notification').onclick=event=>task(event.currentTarget,async()=>{
   try {await api('push',sub.toJSON());} catch(error) {await sub.unsubscribe();throw error;}
   subscription=sub;render();notice('ההתראות פעילות במכשיר הזה.');
 });
-$('privacy').onclick=()=>modal('פרטיות','<p>חברי הקבוצה רואים את השם לתצוגה ואת השריונים. השרת שומר מפתח ציבורי להתחברות ואת פרטי המינוי להתראות אם בחרתם להפעיל אותן. טביעת האצבע או נתוני הפנים נשארים במכשיר. להסרת החשבון והשריונים פנו למי שנתן לכם את קוד ההזמנה.</p>');
+$('privacy').onclick=()=>modal('פרטיות','<p>כל מי שנרשם לאתר יכול לראות את השמות לתצוגה ואת השריונים. השרת שומר מפתח ציבורי להתחברות ואת פרטי המינוי להתראות אם בחרתם להפעיל אותן. טביעת האצבע או נתוני הפנים נשארים במכשיר. להסרת החשבון והשריונים פנו למי שמנהל את האתר.</p>');
 
 async function boot() {
   config=await api('config');
@@ -263,7 +254,6 @@ async function boot() {
   choose(state.today);
   if (config.demo) notice('מצב הדגמה · הנתונים זמניים והסריקה מדומה.');
   if (location.hash.startsWith('#join=')) {
-    inviteLink=location.hash.slice(6);
     history.replaceState(null,'',location.pathname);
     if (!state.user?.name) signIn();
   } else if (state.user && !state.user.name && !location.hash.startsWith('#nfc=')) chooseName();
