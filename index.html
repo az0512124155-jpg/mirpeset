@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://aesgvuzzylgzdddbmzsq.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self';">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142d29">
+  <title>המרפסת • לוח שריונים</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./config.js"></script>
+  <script defer src="./webauthn.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#schedule">דילוג ללוח השריונים</a>
+  <header class="top">
+    <div class="shell bar">
+      <a class="brand" href="./" aria-label="המרפסת, דף הבית"><img src="./icon.svg" alt="" width="42" height="42"><span>המרפסת</span></a>
+      <div class="actions"><button class="quiet" id="install" type="button">התקנה</button><button class="quiet" id="notification" type="button" hidden>הפעלת התראות</button><button class="account" id="account" type="button">התחברות</button></div>
+    </div>
+  </header>
+  <main class="shell" id="schedule">
+    <section class="hero" aria-labelledby="hero-title">
+      <div><h1 id="hero-title">נפגשים במרפסת.</h1><p>שריינו זמן, סרקו בכניסה והשאירו את המרפסת נקייה לבאים אחריכם.</p><button id="hero-book" class="primary" type="button">＋ שריון המרפסת</button></div>
+    </section>
+    <p id="message" role="status" aria-live="polite" hidden></p>
+    <div class="workspace">
+      <section class="panel calendar" aria-labelledby="calendar-title">
+        <div class="section-title"><div><h2 id="calendar-title">לוח שריונים</h2><p>כל השעות לפי שעון ישראל</p></div><button id="today" class="quiet" type="button">היום</button></div>
+        <div class="date-nav"><button id="previous" aria-label="השבוע הקודם" dir="ltr" type="button">›</button><strong id="month"></strong><button id="next" aria-label="השבוע הבא" dir="ltr" type="button">‹</button></div>
+        <div id="days" class="days" aria-label="בחירת יום"></div>
+        <div class="agenda"><h3 id="selected-date"></h3><div id="bookings"></div></div>
+      </section>
+      <aside class="aside">
+        <section class="panel visit" aria-labelledby="visit-title">
+          <div class="nfc-icon" aria-hidden="true">◉</div><h2 id="visit-title">כניסה ויציאה</h2>
+          <p id="visit-text">מצמידים את הטלפון לתג שבמרפסת בתחילת השימוש ובסיום, אחרי שמנקים.</p>
+          <div id="visit-task" class="visit-task" hidden><strong>המשימה שלכם לפני היציאה</strong><span>נקו, פנו את המרפסת וסרקו שוב כדי לסיים.</span></div>
+          <button id="scan" class="outline" type="button">סריקת תג NFC</button>
+        </section>
+        <section class="panel rules" aria-labelledby="rules-title"><h2 id="rules-title">איך זה עובד?</h2><ul><li>כשאין אחריכם שריון של מישהו אחר, אפשר להישאר מעבר לשעת הסיום.</li><li>אפשר לשריין מקום פנוי גם ברגע האחרון. תקבלו התראה לניקיון ולפינוי אם מגיע מישהו אחר.</li><li>סריקת יציאה מאשרת שהמרפסת נקייה ונועלת לכם שריונים נוספים באותו יום.</li></ul></section>
+      </aside>
+    </div>
+    <footer><span>המרפסת</span><button class="quiet" id="privacy" type="button">פרטיות</button></footer>
+  </main>
+  <nav class="mobile-dock" aria-label="פעולות מהירות"><button type="button" id="dock-calendar">לוח שריונים</button><button type="button" class="primary" id="dock-book">＋ שריון חדש</button><button type="button" id="dock-scan">סריקת תג</button></nav>
+  <dialog id="dialog"><div class="dialog-head"><h2 id="dialog-title"></h2><form method="dialog"><button type="submit" aria-label="סגירה">×</button></form></div><div id="dialog-body"></div><p id="dialog-error" role="alert" hidden></p></dialog>
+</body>
+</html>
