@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="./style.css">
   <script defer src="./config.js"></script>
   <script defer src="./webauthn.js"></script>
-  <script defer src="./app.js?v=9a5233868280"></script>
+  <script defer src="./app.js?v=21b4b44b403b"></script>
 </head>
 <body>
   <a class="skip" href="#schedule">דילוג ללוח השריונים</a>
@@ -28,6 +28,10 @@
       <div><h1 id="hero-title">נפגשים במרפסת.</h1><p>שריינו זמן, סרקו בכניסה והשאירו את המרפסת נקייה לבאים אחריכם.</p><button id="hero-book" class="primary" type="button">＋ שריון המרפסת</button></div>
     </section>
     <p id="message" role="status" aria-live="polite" hidden></p>
+    <section class="panel family-updates" id="family-updates" aria-labelledby="family-updates-title" hidden>
+      <h2 id="family-updates-title">עדכוני המרפסת</h2>
+      <ul id="family-updates-list" aria-live="polite"></ul>
+    </section>
     <div class="workspace">
       <section class="panel calendar" aria-labelledby="calendar-title">
         <div class="section-title"><div><h2 id="calendar-title">לוח שריונים</h2><p>כל השעות לפי שעון ישראל</p></div><button id="today" class="quiet" type="button">היום</button></div>

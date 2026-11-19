@@ -68,9 +68,16 @@ function element(type,text,className) {
   return el;
 }
 function render() {
-  const signature=JSON.stringify([state.user,state.today,state.bookings,state.bookings.filter(b=>b.end<=state.now).map(b=>b.id),first,selected,config.demo,Boolean(subscription)]);
+  const signature=JSON.stringify([state.user,state.today,state.bookings,state.updates,state.bookings.filter(b=>b.end<=state.now).map(b=>b.id),first,selected,config.demo,Boolean(subscription)]);
   if (rendered===signature) return;
   rendered=signature;
+  const updates=state.updates||[];
+  $('family-updates').hidden=!updates.length;
+  const updateList=$('family-updates-list');
+  if(updateList.dataset.latest!==updates[0]?.id) {
+    updateList.replaceChildren(...updates.map(update=>element('li',update.body)));
+    updateList.dataset.latest=updates[0]?.id||'';
+  }
   $('account').textContent=state.user?.name || (state.user?'בחירת שם':'התחברות');
   $('notification').hidden=!(state.user?.name && config.pushKey);
   $('notification').textContent=subscription ? 'התראות פעילות' : 'הפעלת התראות';
@@ -187,7 +194,17 @@ function tagAction() {
   if (!state.user?.name) return signIn(tagAction);
   const mine=state.bookings.some(b=>b.status==='active'&&b.owner===state.user.id);
   modal(mine?'אישור יציאה':'אישור כניסה',mine?'<p>אשרו רק אחרי שניקיתם ופיניתם את המרפסת. השריונים הנוספים שלכם להיום יבוטלו.</p><button id="tag-confirm" class="primary" type="button">המרפסת נקייה ופנויה</button>':'<p>אשרו את הכניסה כדי להתחיל את השריון ולקבל את משימת הסיום שלכם.</p><button id="tag-confirm" class="primary" type="button">התחלת השימוש</button>');
-  $('tag-confirm').onclick=event=>task(event.currentTarget,async()=>{await api('scan',{token:scanToken,action:mine?'out':'in'});scanToken=undefined;dialog.close();await refresh();notice(mine?'היציאה נרשמה. תודה שניקיתם!':'הכניסה נרשמה. תהנו במרפסת!');if(!mine) $('visit-title').scrollIntoView({block:'center'});});
+  if(config.scanVerification) $('tag-confirm').before(element('p','לאחר הלחיצה, המכשיר יבקש אימות.'));
+  $('tag-confirm').onclick=event=>task(event.currentTarget,async()=>{
+    const scan={token:scanToken,action:mine?'out':'in'};
+    if(config.scanVerification) {
+      const library=window.SimpleWebAuthnBrowser;
+      if(!library?.browserSupportsWebAuthn()) throw new Error('אישור סריקה דורש דפדפן שתומך במפתח גישה.');
+      const optionsJSON=await api('scan/options',scan);
+      await api('scan',await library.startAuthentication({optionsJSON}));
+    } else await api('scan',scan);
+    scanToken=undefined;dialog.close();await refresh();notice(mine?'היציאה נרשמה. תודה שניקיתם!':'הכניסה נרשמה. תהנו במרפסת!');if(!mine) $('visit-title').scrollIntoView({block:'center'});
+  });
 }
 function readTag(value) {
   try {

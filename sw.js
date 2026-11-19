@@ -1,7 +1,7 @@
 self.addEventListener('push', event => {
   let data;
   try {data = event.data?.json();} catch {data = null;}
-  event.waitUntil(self.registration.showNotification('המרפסת', {body:data?.body || 'יש עדכון לגבי התור שלכם.',icon:new URL('icon-192.png',self.registration.scope).href,tag:'terrace-handoff'}));
+  event.waitUntil(self.registration.showNotification('המרפסת', {body:data?.body || 'יש עדכון לגבי התור שלכם.',icon:new URL('icon-192.png',self.registration.scope).href,tag:data?.tag || 'terrace-handoff'}));
 });
 self.addEventListener('notificationclick', event => {
   event.notification.close();

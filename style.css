@@ -21,6 +21,9 @@ body{background:radial-gradient(ellipse at 3% 20%,#c3dbd2,transparent 45%),radia
 .visit{background:#e6f2e1db}
 .visit-task{display:grid;gap:4px;margin-block:0 13px;padding:11px 13px;border-radius:14px;background:#fff9;border:1px solid white;line-height:1.45}
 .visit-task span{color:var(--ink2)}
+.family-updates{margin-block-end:16px}
+.family-updates h2{font-size:1.08rem}
+.family-updates ul{margin:8px 0 0;padding-inline-start:20px;line-height:1.55}
 .days button{background:#ffffff8c;border-color:#ffffffb0;box-shadow:inset 0 1px 0 #fff}
 .days button[aria-current=date]:not([aria-pressed=true]){border-color:#82a693}
 .days button[aria-pressed=true]{box-shadow:inset 0 1px 0 #fff3,0 4px 10px #21473935}
