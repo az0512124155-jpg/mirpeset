@@ -193,7 +193,7 @@ $('calendar-title').tabIndex=-1;
 function tagAction() {
   if (!state.user?.name) return signIn(tagAction);
   const mine=state.bookings.some(b=>b.status==='active'&&b.owner===state.user.id);
-  modal(mine?'אישור יציאה':'אישור כניסה',mine?'<p>אשרו רק אחרי שניקיתם ופיניתם את המרפסת. השריונים הנוספים שלכם להיום יבוטלו.</p><button id="tag-confirm" class="primary" type="button">המרפסת נקייה ופנויה</button>':'<p>אשרו את הכניסה כדי להתחיל את השריון ולקבל את משימת הסיום שלכם.</p><button id="tag-confirm" class="primary" type="button">התחלת השימוש</button>');
+  modal(mine?'אישור יציאה':'אישור כניסה',mine?'<p>אשרו אחרי שניקיתם ופיניתם את המרפסת.</p><button id="tag-confirm" class="primary" type="button">המרפסת נקייה ופנויה</button>':'<p>אשרו את הכניסה כדי להתחיל את השריון ולקבל את משימת הסיום שלכם.</p><button id="tag-confirm" class="primary" type="button">התחלת השימוש</button>');
   if(config.scanVerification) $('tag-confirm').before(element('p','לאחר הלחיצה, המכשיר יבקש אימות.'));
   $('tag-confirm').onclick=event=>task(event.currentTarget,async()=>{
     const scan={token:scanToken,action:mine?'out':'in'};
